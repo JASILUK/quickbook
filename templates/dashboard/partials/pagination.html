@@ -1,0 +1,107 @@
+{% if page_obj.has_other_pages %}
+    <nav
+        class="dashboard-pagination"
+        aria-label="Pagination"
+    >
+        <ul class="pagination justify-content-center align-items-center mb-0">
+
+            {# Previous page #}
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a
+                        class="page-link"
+                        href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+                        aria-label="Previous"
+                    >
+                        <i class="bi bi-chevron-left"></i>
+                        <span class="d-none d-sm-inline ms-1">
+                            Previous
+                        </span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="bi bi-chevron-left"></i>
+                        <span class="d-none d-sm-inline ms-1">
+                            Previous
+                        </span>
+                    </span>
+                </li>
+            {% endif %}
+
+
+            {# Page numbers #}
+            {% for num in page_obj.paginator.page_range %}
+
+                {% if page_obj.number == num %}
+
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">
+                            {{ num }}
+                        </span>
+                    </li>
+
+                {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+
+                    <li class="page-item">
+                        <a
+                            class="page-link"
+                            href="?page={{ num }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+                        >
+                            {{ num }}
+                        </a>
+                    </li>
+
+                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+
+                    <li class="page-item">
+                        <a
+                            class="page-link"
+                            href="?page={{ num }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+                        >
+                            {{ num }}
+                        </a>
+                    </li>
+
+                {% elif num == 2 or num == page_obj.paginator.num_pages|add:'-1' %}
+
+                    <li class="page-item disabled">
+                        <span class="page-link">
+                            &hellip;
+                        </span>
+                    </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+
+            {# Next page #}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a
+                        class="page-link"
+                        href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search|urlencode }}{% endif %}"
+                        aria-label="Next"
+                    >
+                        <span class="d-none d-sm-inline me-1">
+                            Next
+                        </span>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <span class="d-none d-sm-inline me-1">
+                            Next
+                        </span>
+                        <i class="bi bi-chevron-right"></i>
+                    </span>
+                </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+{% endif %}

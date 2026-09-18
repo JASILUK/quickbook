@@ -1,0 +1,118 @@
+
+{% if node %}
+
+<div class="referral-tree">
+
+    <!-- =====================================================
+         CURRENT NODE
+         ===================================================== -->
+
+    <div class="referral-node-wrapper">
+
+        <div class="referral-node">
+
+            <div class="referral-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+
+            <div class="fw-semibold text-break">
+                {{ node.first_name }} {{ node.last_name }}
+            </div>
+
+            <div class="small text-muted text-break">
+                {{ node.email }}
+            </div>
+
+            <div class="small text-muted mt-1">
+                ID #{{ node.user_id }}
+            </div>
+
+            {% if node.position %}
+
+                <span class="badge text-bg-light mt-2">
+                    {{ node.position }}
+                </span>
+
+            {% else %}
+
+                <span class="badge text-bg-dark mt-2">
+                    ROOT
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CHILDREN
+         ===================================================== -->
+
+    {% if node.left or node.right %}
+
+        <div class="referral-children">
+
+
+            <!-- =================================================
+                 LEFT
+                 ================================================= -->
+
+            <div class="referral-child">
+
+                <div class="referral-position">
+                    LEFT
+                </div>
+
+
+                {% if node.left %}
+
+                    {% include "dashboard/customers/referrals.html" with node=node.left %}
+
+                {% else %}
+
+                    <div class="referral-empty">
+                        Empty
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RIGHT
+                 ================================================= -->
+
+            <div class="referral-child">
+
+                <div class="referral-position">
+                    RIGHT
+                </div>
+
+
+                {% if node.right %}
+
+                    {% include "dashboard/customers/referrals.html" with node=node.right %}
+
+                {% else %}
+
+                    <div class="referral-empty">
+                        Empty
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+

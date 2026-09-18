@@ -1,0 +1,680 @@
+
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    Customer - {{ customer.email }} - QuickBook
+{% endblock %}
+
+{% block page_title %}
+    Customer Details
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+    /* =========================================================
+       REFERRAL TREE
+       ========================================================= */
+
+    .referral-tree {
+        width: 100%;
+        overflow-x: auto;
+        padding: 10px 0 20px;
+    }
+
+
+    .referral-node-wrapper {
+        width: 100%;
+        text-align: center;
+    }
+
+
+    .referral-node {
+        display: inline-block;
+
+        min-width: 180px;
+        max-width: 220px;
+
+        padding: 16px;
+
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+
+        background: #fff;
+
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+        vertical-align: top;
+    }
+
+
+    .referral-avatar {
+        width: 42px;
+        height: 42px;
+
+        margin: 0 auto 8px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #212529;
+        color: #fff;
+    }
+
+
+    .referral-children {
+        display: grid;
+
+        grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr);
+
+        gap: 30px;
+
+        margin-top: 30px;
+
+        min-width: 400px;
+    }
+
+
+    .referral-child {
+        min-width: 0;
+
+        text-align: center;
+    }
+
+
+    .referral-position {
+        margin-bottom: 10px;
+
+        font-size: 12px;
+        font-weight: 600;
+
+        color: #6c757d;
+
+        letter-spacing: 0.05em;
+    }
+
+
+    .referral-empty {
+        display: inline-block;
+
+        min-width: 120px;
+
+        padding: 14px;
+
+        border: 1px dashed #ced4da;
+        border-radius: 10px;
+
+        color: #6c757d;
+
+        font-size: 14px;
+    }
+
+
+    /* =========================================================
+       MOBILE
+       ========================================================= */
+
+    @media (max-width: 768px) {
+
+        .referral-tree {
+            overflow-x: auto;
+        }
+
+        .referral-children {
+            gap: 20px;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+    <div>
+
+        <h4 class="mb-1">
+            {{ customer.get_full_name|default:customer.email }}
+        </h4>
+
+        <p class="text-muted mb-0">
+            Customer account and referral information.
+        </p>
+
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'dashboard:customers' %}"
+            class="btn btn-outline-secondary"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Back
+
+        </a>
+
+
+        <a
+            href="{% url 'dashboard:customer-edit' customer.id %}"
+            class="btn btn-dark"
+        >
+
+            <i class="bi bi-pencil"></i>
+
+            Edit
+
+        </a>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     CUSTOMER INFORMATION + ACCOUNT ACTIONS
+     ========================================================= -->
+
+<div class="row g-4 mb-4">
+
+
+    <!-- =====================================================
+         CUSTOMER INFORMATION
+         ===================================================== -->
+
+    <div class="col-12 col-lg-8">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-header bg-white border-0 pt-4 px-4">
+
+                <h5 class="mb-0">
+                    Customer Information
+                </h5>
+
+            </div>
+
+
+            <div class="card-body px-4">
+
+                <div class="row g-4">
+
+
+                    <!-- FULL NAME -->
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Full Name
+                        </small>
+
+                        <strong>
+                            {{ customer.get_full_name|default:"—" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Email
+                        </small>
+
+                        <strong class="text-break">
+                            {{ customer.email }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- CUSTOMER ID -->
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Customer ID
+                        </small>
+
+                        <strong>
+                            #{{ customer.id }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- REFERRAL CODE -->
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Referral Code
+                        </small>
+
+                        <code>
+                            {{ customer.referral_code|default:"—" }}
+                        </code>
+
+                    </div>
+
+
+                    <!-- JOINED -->
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Joined
+                        </small>
+
+                        <strong>
+                            {{ customer.created_at|date:"d M Y, h:i A" }}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- ACCOUNT STATUS -->
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Account Status
+                        </small>
+
+
+                        {% if customer.is_active %}
+
+                            <span class="badge text-bg-success">
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge text-bg-secondary">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ACCOUNT ACTIONS
+         ===================================================== -->
+
+    <div class="col-12 col-lg-4">
+
+        <div class="card border-0 shadow-sm h-100">
+
+            <div class="card-header bg-white border-0 pt-4 px-4">
+
+                <h5 class="mb-0">
+                    Account Actions
+                </h5>
+
+            </div>
+
+
+            <div class="card-body px-4">
+
+
+                {% if customer.is_active %}
+
+                    <p class="text-muted small">
+
+                        Deactivating the customer prevents the account
+                        from performing protected customer actions.
+
+                    </p>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'dashboard:customer-deactivate' customer.id %}"
+                        onsubmit="return confirm('Deactivate this customer?');"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-danger w-100"
+                        >
+
+                            <i class="bi bi-person-x"></i>
+
+                            Deactivate Customer
+
+                        </button>
+
+                    </form>
+
+
+                {% else %}
+
+
+                    <p class="text-muted small">
+
+                        This customer is currently inactive.
+
+                    </p>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'dashboard:customer-activate' customer.id %}"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+
+                            <i class="bi bi-person-check"></i>
+
+                            Activate Customer
+
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     REFERRAL NETWORK
+     ========================================================= -->
+
+{% if has_referral_node %}
+
+
+    <!-- =====================================================
+         REFERRAL HEADER
+         ===================================================== -->
+
+    <div class="mb-4">
+
+        <div class="mb-3">
+
+            <h5 class="mb-1">
+                Referral Network
+            </h5>
+
+            <p class="text-muted mb-0">
+                Binary referral structure and team statistics.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             REFERRAL STATISTICS
+             ================================================= -->
+
+        <div class="row g-3">
+
+
+            <!-- LEFT TEAM -->
+
+            <div class="col-12 col-md-6 col-xl-3">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Left Team
+                        </small>
+
+                        <h3 class="mb-0 mt-2">
+                            {{ referral_stats.left_team_count }}
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RIGHT TEAM -->
+
+            <div class="col-12 col-md-6 col-xl-3">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Right Team
+                        </small>
+
+                        <h3 class="mb-0 mt-2">
+                            {{ referral_stats.right_team_count }}
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TOTAL TEAM -->
+
+            <div class="col-12 col-md-6 col-xl-3">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Total Team
+                        </small>
+
+                        <h3 class="mb-0 mt-2">
+                            {{ referral_stats.total_team_count }}
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- DIRECT CHILDREN -->
+
+            <div class="col-12 col-md-6 col-xl-3">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <small class="text-muted">
+                            Direct Binary Children
+                        </small>
+
+                        <h3 class="mb-0 mt-2">
+                            {{ referral_stats.direct_binary_children_count }}
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         NETWORK ROOT
+         ===================================================== -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+
+
+                <div>
+
+                    <small class="text-muted d-block">
+                        Referral Network Root
+                    </small>
+
+
+                    <h5 class="mb-1 mt-1">
+
+                        {{ referral_root.first_name }}
+
+                        {{ referral_root.last_name }}
+
+                    </h5>
+
+
+                    <div class="text-muted">
+
+                        {{ referral_root.email }}
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="text-md-end">
+
+                    <small class="text-muted d-block">
+                        User ID
+                    </small>
+
+
+                    <strong>
+                        #{{ referral_root.user_id }}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         REFERRAL TREE
+         ===================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 pt-4 px-4">
+
+            <h5 class="mb-1">
+                Referral Tree
+            </h5>
+
+            <p class="text-muted small mb-0">
+                Binary subtree rooted at this customer.
+            </p>
+
+        </div>
+
+
+        <div class="card-body px-4 py-4">
+
+            {% include "dashboard/customers/referrals.html" with node=referral_tree %}
+
+        </div>
+
+    </div>
+
+
+{% else %}
+
+
+    <!-- =====================================================
+         NO REFERRAL NODE
+         ===================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body text-center py-5">
+
+            <i class="bi bi-diagram-3 fs-1 text-muted"></i>
+
+
+            <h5 class="mt-3">
+                No Referral Network
+            </h5>
+
+
+            <p class="text-muted mb-0">
+                This customer does not have a referral node.
+            </p>
+
+        </div>
+
+    </div>
+
+
+{% endif %}
+
+
+{% endblock %}
+

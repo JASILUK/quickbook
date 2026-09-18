@@ -1,0 +1,244 @@
+```html
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    {{ vendor.name }} | QuickBook
+{% endblock %}
+
+{% block page_title %}
+    Vendor Details
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <div class="mb-4">
+
+        <a
+            href="{% url 'dashboard:vendors' %}"
+            class="text-decoration-none text-secondary small"
+        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Vendors
+        </a>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <!-- Vendor information -->
+        <div class="col-12 col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+
+                        <div>
+
+                            <h2 class="h5 fw-bold mb-1">
+                                {{ vendor.name }}
+                            </h2>
+
+                            <p class="text-secondary small mb-0">
+                                Vendor #{{ vendor.id }}
+                            </p>
+
+                        </div>
+
+
+                        {% if vendor.is_active %}
+
+                            <span class="badge text-bg-success">
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge text-bg-danger">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="row g-4">
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="text-secondary small mb-1">
+                                Email
+                            </div>
+
+                            <div class="fw-semibold">
+                                {{ vendor.email|default:"—" }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="text-secondary small mb-1">
+                                Phone
+                            </div>
+
+                            <div class="fw-semibold">
+                                {{ vendor.phone|default:"—" }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-12">
+
+                            <div class="text-secondary small mb-1">
+                                Address
+                            </div>
+
+                            <div class="fw-semibold">
+                                {{ vendor.address|default:"—"|linebreaksbr }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-12">
+
+                            <div class="text-secondary small mb-1">
+                                Description
+                            </div>
+
+                            <div>
+                                {{ vendor.description|default:"No description provided."|linebreaksbr }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="text-secondary small mb-1">
+                                Created By
+                            </div>
+
+                            <div class="fw-semibold">
+                                {{ vendor.created_by.email }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-12 col-md-6">
+
+                            <div class="text-secondary small mb-1">
+                                Created
+                            </div>
+
+                            <div class="fw-semibold">
+                                {{ vendor.created_at|date:"d M Y, h:i A" }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-4 pt-4 border-top">
+
+                        <a
+                            href="{% url 'dashboard:vendor-edit' vendor_id=vendor.id %}"
+                            class="btn btn-dark"
+                        >
+                            <i class="bi bi-pencil me-1"></i>
+                            Edit Vendor
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Actions -->
+        <div class="col-12 col-lg-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <h2 class="h6 fw-bold mb-3">
+                        Account Actions
+                    </h2>
+
+
+                    {% if vendor.is_active %}
+
+                        <p class="small text-secondary">
+                            Deactivate this vendor without deleting
+                            historical event records.
+                        </p>
+
+                        <form
+                            method="post"
+                            action="{% url 'dashboard:vendor-deactivate' vendor_id=vendor.id %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-danger w-100"
+                            >
+                                <i class="bi bi-shop-window me-1"></i>
+                                Deactivate Vendor
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <p class="small text-secondary">
+                            Activate this vendor to allow them to
+                            continue participating in the platform.
+                        </p>
+
+                        <form
+                            method="post"
+                            action="{% url 'dashboard:vendor-activate' vendor_id=vendor.id %}"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-success w-100"
+                            >
+                                <i class="bi bi-check-circle me-1"></i>
+                                Activate Vendor
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

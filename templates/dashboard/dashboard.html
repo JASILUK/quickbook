@@ -1,0 +1,700 @@
+
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    Dashboard | QuickBook
+{% endblock %}
+
+{% block page_title %}
+    Dashboard
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* =========================================
+       Dashboard Home
+       ========================================= */
+
+    .dashboard-welcome {
+        margin-bottom: 1.75rem;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 1.65rem;
+        font-weight: 700;
+        color: var(--dashboard-text, #1f2937);
+        margin-bottom: 0.35rem;
+    }
+
+    .dashboard-welcome p {
+        color: var(--dashboard-muted, #6b7280);
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+
+    /* =========================================
+       Stat Cards
+       ========================================= */
+
+    .dashboard-stat-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1.25rem;
+        height: 100%;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .dashboard-stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+        border-color: #d9dee7;
+    }
+
+    .dashboard-stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.15rem;
+    }
+
+    .dashboard-stat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        color: #374151;
+        font-size: 1.25rem;
+    }
+
+    .dashboard-stat-label {
+        color: #6b7280;
+        font-size: 0.84rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .dashboard-stat-value {
+        color: #111827;
+        font-size: 1.75rem;
+        line-height: 1.1;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .dashboard-stat-meta {
+        color: #6b7280;
+        font-size: 0.78rem;
+        margin-top: 0.45rem;
+    }
+
+
+    /* =========================================
+       Section Cards
+       ========================================= */
+
+    .dashboard-section-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .dashboard-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.15rem 1.25rem;
+        border-bottom: 1px solid #eef0f3;
+    }
+
+    .dashboard-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 650;
+        color: #1f2937;
+    }
+
+    .dashboard-section-title i {
+        color: #6b7280;
+    }
+
+    .dashboard-section-link {
+        color: #4b5563;
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 500;
+    }
+
+    .dashboard-section-link:hover {
+        color: #111827;
+        text-decoration: underline;
+    }
+
+
+    /* =========================================
+       Upcoming Events
+       ========================================= */
+
+    .dashboard-event-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .dashboard-event-item {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f0f1f3;
+    }
+
+    .dashboard-event-item:last-child {
+        border-bottom: 0;
+    }
+
+    .dashboard-event-title {
+        color: #1f2937;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+    }
+
+    .dashboard-event-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        color: #6b7280;
+        font-size: 0.78rem;
+    }
+
+    .dashboard-event-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .dashboard-event-vendor {
+        margin-top: 0.45rem;
+        color: #9ca3af;
+        font-size: 0.76rem;
+    }
+
+
+    /* =========================================
+       Recent Bookings
+       ========================================= */
+
+    .dashboard-booking-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .dashboard-booking-item {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f0f1f3;
+    }
+
+    .dashboard-booking-item:last-child {
+        border-bottom: 0;
+    }
+
+    .dashboard-booking-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .dashboard-booking-user {
+        color: #1f2937;
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .dashboard-booking-event {
+        color: #6b7280;
+        font-size: 0.78rem;
+    }
+
+    .dashboard-booking-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.7rem;
+        margin-top: 0.45rem;
+        color: #9ca3af;
+        font-size: 0.75rem;
+    }
+
+    .dashboard-booking-amount {
+        color: #1f2937;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .dashboard-status {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    .dashboard-status-confirmed {
+        background: #ecfdf3;
+        color: #166534;
+    }
+
+    .dashboard-status-cancelled {
+        background: #fef2f2;
+        color: #991b1b;
+    }
+
+
+    /* =========================================
+       Empty State
+       ========================================= */
+
+    .dashboard-empty-state {
+        padding: 2.25rem 1.25rem;
+        text-align: center;
+    }
+
+    .dashboard-empty-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 0.85rem;
+        border-radius: 12px;
+        background: #f3f4f6;
+        color: #9ca3af;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .dashboard-empty-title {
+        color: #374151;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+
+    .dashboard-empty-text {
+        color: #9ca3af;
+        font-size: 0.78rem;
+        margin: 0;
+    }
+
+
+    /* =========================================
+       Responsive
+       ========================================= */
+
+    @media (max-width: 991.98px) {
+        .dashboard-welcome h1 {
+            font-size: 1.45rem;
+        }
+
+        .dashboard-stat-value {
+            font-size: 1.55rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .dashboard-section-header {
+            padding: 1rem;
+        }
+
+        .dashboard-event-item,
+        .dashboard-booking-item {
+            padding: 0.9rem 1rem;
+        }
+
+        .dashboard-booking-row {
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .dashboard-booking-amount {
+            align-self: flex-start;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <!-- =========================================
+         Welcome
+         ========================================= -->
+
+    <div class="dashboard-welcome">
+        <h1>
+            Welcome back{% if request.user.first_name %}, {{ request.user.first_name }}{% endif %}
+        </h1>
+
+        <p>
+            Here's what's happening across your QuickBook platform.
+        </p>
+    </div>
+
+
+    <!-- =========================================
+         Overview Statistics
+         ========================================= -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Customers -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-header">
+                    <div>
+                        <div class="dashboard-stat-label">
+                            Total Customers
+                        </div>
+
+                        <p class="dashboard-stat-value">
+                            {{ overview.customers.total|default:0 }}
+                        </p>
+                    </div>
+
+                    <div class="dashboard-stat-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+
+                <div class="dashboard-stat-meta">
+                    Registered customers
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Vendors -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-header">
+                    <div>
+                        <div class="dashboard-stat-label">
+                            Total Vendors
+                        </div>
+
+                        <p class="dashboard-stat-value">
+                            {{ overview.vendors.total|default:0 }}
+                        </p>
+                    </div>
+
+                    <div class="dashboard-stat-icon">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                </div>
+
+                <div class="dashboard-stat-meta">
+                    {{ overview.vendors.active|default:0 }} active vendors
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Events -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-header">
+                    <div>
+                        <div class="dashboard-stat-label">
+                            Total Events
+                        </div>
+
+                        <p class="dashboard-stat-value">
+                            {{ overview.events.total|default:0 }}
+                        </p>
+                    </div>
+
+                    <div class="dashboard-stat-icon">
+                        <i class="bi bi-calendar-event-fill"></i>
+                    </div>
+                </div>
+
+                <div class="dashboard-stat-meta">
+                    {{ overview.events.active|default:0 }} active events
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Bookings -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="dashboard-stat-card">
+
+                <div class="dashboard-stat-header">
+                    <div>
+                        <div class="dashboard-stat-label">
+                            Total Bookings
+                        </div>
+
+                        <p class="dashboard-stat-value">
+                            {{ overview.bookings.total|default:0 }}
+                        </p>
+                    </div>
+
+                    <div class="dashboard-stat-icon">
+                        <i class="bi bi-ticket-perforated-fill"></i>
+                    </div>
+                </div>
+
+                <div class="dashboard-stat-meta">
+                    {{ overview.bookings.confirmed|default:0 }} confirmed bookings
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         Upcoming Events + Recent Bookings
+         ========================================= -->
+
+    <div class="row g-4">
+
+        <!-- =====================================
+             Upcoming Events
+             ===================================== -->
+
+        <div class="col-12 col-xl-6">
+
+            <div class="dashboard-section-card">
+
+                <div class="dashboard-section-header">
+
+                    <h2 class="dashboard-section-title">
+                        <i class="bi bi-calendar-event"></i>
+                        Upcoming Events
+                    </h2>
+
+                    <a
+                        href="#"
+                        class="dashboard-section-link"
+                    >
+                        View all
+                    </a>
+
+                </div>
+
+
+                {% if upcoming_events %}
+
+                    <ul class="dashboard-event-list">
+
+                        {% for event in upcoming_events %}
+
+                            <li class="dashboard-event-item">
+
+                                <div class="dashboard-event-title">
+                                    {{ event.title }}
+                                </div>
+
+                                <div class="dashboard-event-meta">
+
+                                    <span>
+                                        <i class="bi bi-clock"></i>
+
+                                        {{ event.start_datetime|date:"d M Y, h:i A" }}
+                                    </span>
+
+                                    <span>
+                                        <i class="bi bi-geo-alt"></i>
+
+                                        {{ event.venue_name }}
+                                    </span>
+
+                                </div>
+
+                                <div class="dashboard-event-vendor">
+
+                                    <i class="bi bi-shop me-1"></i>
+
+                                    {{ event.vendor.name }}
+
+                                </div>
+
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <div class="dashboard-empty-state">
+
+                        <div class="dashboard-empty-icon">
+                            <i class="bi bi-calendar-x"></i>
+                        </div>
+
+                        <div class="dashboard-empty-title">
+                            No upcoming events
+                        </div>
+
+                        <p class="dashboard-empty-text">
+                            There are currently no upcoming events to display.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================
+             Recent Bookings
+             ===================================== -->
+
+        <div class="col-12 col-xl-6">
+
+            <div class="dashboard-section-card">
+
+                <div class="dashboard-section-header">
+
+                    <h2 class="dashboard-section-title">
+                        <i class="bi bi-ticket-perforated"></i>
+                        Recent Bookings
+                    </h2>
+
+                    <a
+                        href="#"
+                        class="dashboard-section-link"
+                    >
+                        View all
+                    </a>
+
+                </div>
+
+
+                {% if recent_bookings %}
+
+                    <ul class="dashboard-booking-list">
+
+                        {% for booking in recent_bookings %}
+
+                            <li class="dashboard-booking-item">
+
+                                <div class="dashboard-booking-row">
+
+                                    <div>
+
+                                        <div class="dashboard-booking-user">
+                                            {{ booking.user.email }}
+                                        </div>
+
+                                        <div class="dashboard-booking-event">
+                                            {{ booking.event.title }}
+                                        </div>
+
+                                        <div class="dashboard-booking-meta">
+
+                                            <span>
+                                                <i class="bi bi-ticket"></i>
+                                                {{ booking.quantity }}
+                                                {% if booking.quantity == 1 %}
+                                                    ticket
+                                                {% else %}
+                                                    tickets
+                                                {% endif %}
+                                            </span>
+
+                                            <span>
+                                                {{ booking.booked_at|date:"d M Y, h:i A" }}
+                                            </span>
+
+                                            <span
+                                                class="dashboard-status
+                                                {% if booking.status == 'CONFIRMED' %}
+                                                    dashboard-status-confirmed
+                                                {% elif booking.status == 'CANCELLED' %}
+                                                    dashboard-status-cancelled
+                                                {% endif %}"
+                                            >
+                                                {{ booking.get_status_display }}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="dashboard-booking-amount">
+                                        ₹{{ booking.total_amount|floatformat:2 }}
+                                    </div>
+
+                                </div>
+
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <div class="dashboard-empty-state">
+
+                        <div class="dashboard-empty-icon">
+                            <i class="bi bi-ticket-perforated"></i>
+                        </div>
+
+                        <div class="dashboard-empty-title">
+                            No recent bookings
+                        </div>
+
+                        <p class="dashboard-empty-text">
+                            Booking activity will appear here once customers make bookings.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

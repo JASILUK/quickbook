@@ -1,0 +1,348 @@
+```html
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    Vendors | QuickBook
+{% endblock %}
+
+{% block page_title %}
+    Vendors
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .vendor-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .vendor-page-title {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .vendor-page-subtitle {
+        margin: 0.3rem 0 0;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    .vendor-search-card,
+    .vendor-table-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+    }
+
+    .vendor-search-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .vendor-table-card {
+        overflow: hidden;
+    }
+
+    .vendor-table {
+        margin-bottom: 0;
+    }
+
+    .vendor-table th {
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    .vendor-table td {
+        padding: 0.95rem 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f1f3;
+        font-size: 0.84rem;
+    }
+
+    .vendor-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .vendor-name {
+        color: #111827;
+        font-weight: 600;
+    }
+
+    .vendor-email {
+        color: #6b7280;
+        font-size: 0.78rem;
+    }
+
+    .vendor-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.3rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .vendor-status-active {
+        background: #ecfdf3;
+        color: #166534;
+    }
+
+    .vendor-status-inactive {
+        background: #fef2f2;
+        color: #991b1b;
+    }
+
+    .vendor-action {
+        color: #4b5563;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .vendor-action:hover {
+        color: #111827;
+        text-decoration: underline;
+    }
+
+    .vendor-empty {
+        padding: 3rem 1rem;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    .vendor-pagination {
+        padding: 1rem;
+        border-top: 1px solid #f0f1f3;
+    }
+
+    @media (max-width: 767.98px) {
+        .vendor-page-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .vendor-table-card {
+            overflow-x: auto;
+        }
+
+        .vendor-table {
+            min-width: 700px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <!-- Header -->
+    <div class="vendor-page-header">
+
+        <div>
+            <h1 class="vendor-page-title">
+                Vendors
+            </h1>
+
+            <p class="vendor-page-subtitle">
+                Manage event vendors and their account status.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'dashboard:vendor-create' %}"
+            class="btn btn-dark"
+        >
+            <i class="bi bi-plus-lg me-1"></i>
+            Add Vendor
+        </a>
+
+    </div>
+
+
+    <!-- Search -->
+    <div class="vendor-search-card">
+
+        <form method="get" class="row g-2">
+
+            <div class="col-12 col-md">
+
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ search }}"
+                    class="form-control"
+                    placeholder="Search by name, email, phone or address..."
+                >
+
+            </div>
+
+            <div class="col-12 col-md-auto">
+
+                <button
+                    type="submit"
+                    class="btn btn-dark w-100"
+                >
+                    <i class="bi bi-search me-1"></i>
+                    Search
+                </button>
+
+            </div>
+
+            {% if search %}
+
+                <div class="col-12 col-md-auto">
+
+                    <a
+                        href="{% url 'dashboard:vendors' %}"
+                        class="btn btn-outline-secondary w-100"
+                    >
+                        Clear
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+
+    <!-- Vendor table -->
+    <div class="vendor-table-card">
+
+        {% if vendors %}
+
+            <div class="table-responsive">
+
+                <table class="table vendor-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Vendor</th>
+                            <th>Phone</th>
+                            <th>Events</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for vendor in vendors %}
+
+                            <tr>
+
+                                <td>
+                                    <div class="vendor-name">
+                                        {{ vendor.name }}
+                                    </div>
+
+                                    {% if vendor.email %}
+                                        <div class="vendor-email">
+                                            {{ vendor.email }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ vendor.phone|default:"—" }}
+                                </td>
+
+                                <td>
+                                    {{ vendor.events.count }}
+                                </td>
+
+                                <td>
+
+                                    {% if vendor.is_active %}
+
+                                        <span class="vendor-status vendor-status-active">
+                                            Active
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="vendor-status vendor-status-inactive">
+                                            Inactive
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a
+                                        href="{% url 'dashboard:vendor-detail' vendor_id=vendor.id %}"
+                                        class="vendor-action"
+                                    >
+                                        View
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="vendor-pagination">
+
+                {% include "dashboard/partials/pagination.html" %}
+
+            </div>
+
+        {% else %}
+
+            <div class="vendor-empty">
+
+                <div class="mb-2">
+                    <i class="bi bi-shop fs-3"></i>
+                </div>
+
+                <div class="fw-semibold mb-1">
+                    No vendors found
+                </div>
+
+                <div class="small">
+                    {% if search %}
+                        Try a different search term.
+                    {% else %}
+                        Add your first vendor to get started.
+                    {% endif %}
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

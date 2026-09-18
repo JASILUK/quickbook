@@ -1,0 +1,21 @@
+<div class="dashboard-user">
+
+    <div class="dashboard-user-avatar">
+        {{ request.user.first_name|first|default:request.user.email|first|upper }}
+    </div>
+
+    <div class="dashboard-user-info">
+        <div class="dashboard-user-name">
+            {% if request.user.get_full_name %}
+                {{ request.user.get_full_name }}
+            {% else %}
+                {{ request.user.email }}
+            {% endif %}
+        </div>
+
+        <div class="dashboard-user-role">
+            Staff
+        </div>
+    </div>
+
+</div>

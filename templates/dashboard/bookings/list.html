@@ -1,0 +1,302 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Bookings - QuickBook{% endblock %}
+
+{% block page_title %}
+    Bookings
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+    <div>
+        <h4 class="mb-1">Bookings</h4>
+        <p class="text-muted mb-0">
+            Manage customer event bookings.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- Filters -->
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+
+        <form method="get">
+
+            <div class="row g-3">
+
+                <!-- Search -->
+
+                <div class="col-12 col-lg-5">
+
+                    <label class="form-label">
+                        Search
+                    </label>
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Customer, email, event or venue..."
+                    >
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div class="col-12 col-md-4 col-lg-3">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        name="status"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        <option
+                            value="CONFIRMED"
+                            {% if selected_status == "CONFIRMED" %}
+                                selected
+                            {% endif %}
+                        >
+                            Confirmed
+                        </option>
+
+                        <option
+                            value="CANCELLED"
+                            {% if selected_status == "CANCELLED" %}
+                                selected
+                            {% endif %}
+                        >
+                            Cancelled
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Event -->
+
+                <div class="col-12 col-md-8 col-lg-3">
+
+                    <label class="form-label">
+                        Event
+                    </label>
+
+                    <select
+                        name="event_id"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All events
+                        </option>
+
+                        {% for event in events %}
+
+                            <option
+                                value="{{ event.id }}"
+                                {% if selected_event_id == event.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ event.title }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- Buttons -->
+
+                <div class="col-12 col-lg-1 d-flex align-items-end">
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark w-100"
+                    >
+                        <i class="bi bi-funnel"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- Booking table -->
+
+<div class="card border-0 shadow-sm">
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th class="px-4">Booking</th>
+                        <th>Customer</th>
+                        <th>Event</th>
+                        <th>Tickets</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Booked At</th>
+                        <th class="text-end px-4">Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for booking in bookings %}
+
+                        <tr>
+
+                            <td class="px-4">
+
+                                <div class="fw-semibold">
+                                    #{{ booking.id }}
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="fw-semibold">
+                                    {{ booking.user.get_full_name|default:booking.user.email }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ booking.user.email }}
+                                </small>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="fw-semibold">
+                                    {{ booking.event.title }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ booking.event.venue_name }}
+                                </small>
+
+                            </td>
+
+
+                            <td>
+                                {{ booking.quantity }}
+                            </td>
+
+
+                            <td>
+                                ₹{{ booking.total_amount }}
+                            </td>
+
+
+                            <td>
+
+                                {% if booking.status == "CONFIRMED" %}
+
+                                    <span class="badge text-bg-success">
+                                        Confirmed
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge text-bg-secondary">
+                                        Cancelled
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <small>
+                                    {{ booking.booked_at|date:"d M Y, h:i A" }}
+                                </small>
+
+                            </td>
+
+
+                            <td class="text-end px-4">
+
+                                <a
+                                    href="{% url 'dashboard:booking-detail' booking.id %}"
+                                    class="btn btn-sm btn-outline-dark"
+                                >
+                                    View
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center py-5"
+                            >
+
+                                <div class="text-muted">
+
+                                    <i class="bi bi-ticket-perforated fs-2"></i>
+
+                                    <p class="mt-2 mb-0">
+                                        No bookings found.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% include "dashboard/partials/pagination.html" %}
+
+{% endblock %}

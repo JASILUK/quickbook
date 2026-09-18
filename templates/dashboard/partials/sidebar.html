@@ -1,0 +1,86 @@
+<div class="dashboard-brand">
+    <a
+        href="{% url 'dashboard:home' %}"
+        class="text-decoration-none"
+    >
+        Quick<span>Book</span>
+    </a>
+</div>
+
+
+<nav class="dashboard-nav">
+
+    <!-- Overview -->
+    <div class="dashboard-nav-label">
+        Overview
+    </div>
+
+    <a
+        href="{% url 'dashboard:home' %}"
+        class="dashboard-nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+    >
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Dashboard</span>
+    </a>
+
+
+    <!-- Management -->
+    <div class="dashboard-nav-label mt-4">
+        Management
+    </div>
+
+    <a
+        href="{% url 'dashboard:customers' %}"
+        class="dashboard-nav-link {% if request.resolver_match.url_name == 'customers' or request.resolver_match.url_name == 'customer-detail' or request.resolver_match.url_name == 'customer-edit' %}active{% endif %}"
+    >
+        <i class="bi bi-people-fill"></i>
+        <span>Customers</span>
+    </a>
+
+    <a
+        href="{% url 'dashboard:vendors' %}"
+        class="dashboard-nav-link {% if 'vendor' in request.resolver_match.url_name %}active{% endif %}"
+    >
+        <i class="bi bi-shop"></i>
+        <span>Vendors</span>
+    </a>
+
+    <a
+        href="{% url 'dashboard:events' %}"
+        class="dashboard-nav-link {% if 'event' in request.resolver_match.url_name %}active{% endif %}"
+    >
+        <i class="bi bi-calendar-event-fill"></i>
+        <span>Events</span>
+    </a>
+
+    <a
+        href="{% url 'dashboard:bookings' %}"
+        class="dashboard-nav-link {% if 'booking' in request.resolver_match.url_name %}active{% endif %}"
+    >
+        <i class="bi bi-ticket-perforated-fill"></i>
+        <span>Bookings</span>
+    </a>
+
+
+    <!-- Account -->
+    <div class="dashboard-nav-label mt-4">
+        Account
+    </div>
+
+    <form
+        method="post"
+        action="#"
+        class="m-0"
+    >
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="dashboard-nav-link dashboard-nav-button"
+        >
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </button>
+    </form>
+
+</nav>

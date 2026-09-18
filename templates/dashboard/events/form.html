@@ -1,0 +1,330 @@
+```html
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    {{ page_title }} | QuickBook
+{% endblock %}
+
+{% block page_title %}
+    {{ page_title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <div class="mb-4">
+
+        <a
+            href="{% if event %}{% url 'dashboard:event-detail' event_id=event.id %}{% else %}{% url 'dashboard:events' %}{% endif %}"
+            class="text-decoration-none text-secondary small"
+        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+        </a>
+
+    </div>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+
+        {% endif %}
+
+
+        <div class="row g-4">
+
+            <!-- Main information -->
+
+            <div class="col-12 col-lg-8">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <h2 class="h5 fw-bold mb-4">
+                            Event Information
+                        </h2>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Vendor
+                            </label>
+
+                            {{ form.vendor }}
+
+                            {% if form.vendor.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.vendor.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Event Title
+                            </label>
+
+                            {{ form.title }}
+
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.title.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Description
+                            </label>
+
+                            {{ form.description }}
+
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.description.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="row">
+
+                            <div class="col-12 col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Venue Name
+                                </label>
+
+                                {{ form.venue_name }}
+
+                                {% if form.venue_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.venue_name.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="col-12 col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Address
+                                </label>
+
+                                {{ form.address }}
+
+                                {% if form.address.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.address.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+
+                            <div class="col-12 col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Start Date & Time
+                                </label>
+
+                                {{ form.start_datetime }}
+
+                                {% if form.start_datetime.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.start_datetime.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="col-12 col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    End Date & Time
+                                </label>
+
+                                {{ form.end_datetime }}
+
+                                {% if form.end_datetime.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.end_datetime.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Configuration -->
+
+            <div class="col-12 col-lg-4">
+
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-body p-4">
+
+                        <h2 class="h6 fw-bold mb-4">
+                            Event Configuration
+                        </h2>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Total Seats
+                            </label>
+
+                            {{ form.total_seats }}
+
+                            {% if form.total_seats.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.total_seats.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Ticket Price
+                            </label>
+
+                            {{ form.ticket_price }}
+
+                            {% if form.ticket_price.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.ticket_price.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Coordinates -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4">
+
+                        <h2 class="h6 fw-bold mb-1">
+                            Location Coordinates
+                        </h2>
+
+                        <p class="text-secondary small mb-3">
+                            Optional. If provided, both values are required.
+                        </p>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Latitude
+                            </label>
+
+                            {{ form.latitude }}
+
+                            {% if form.latitude.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.latitude.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Longitude
+                            </label>
+
+                            {{ form.longitude }}
+
+                            {% if form.longitude.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.longitude.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="d-flex gap-2 mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-dark"
+            >
+                <i class="bi bi-check-lg me-1"></i>
+
+                {% if event %}
+                    Save Changes
+                {% else %}
+                    Create Event
+                {% endif %}
+
+            </button>
+
+
+            <a
+                href="{% if event %}{% url 'dashboard:event-detail' event_id=event.id %}{% else %}{% url 'dashboard:events' %}{% endif %}"
+                class="btn btn-outline-secondary"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
+```

@@ -1,0 +1,334 @@
+```html
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    Customers | QuickBook
+{% endblock %}
+
+{% block page_title %}
+    Customers
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .customer-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .customer-page-title {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .customer-page-subtitle {
+        margin: 0.3rem 0 0;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    .customer-search-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .customer-table-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .customer-table {
+        margin-bottom: 0;
+    }
+
+    .customer-table th {
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+    }
+
+    .customer-table td {
+        padding: 0.95rem 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f1f3;
+        font-size: 0.84rem;
+    }
+
+    .customer-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .customer-name {
+        color: #111827;
+        font-weight: 600;
+    }
+
+    .customer-email {
+        color: #6b7280;
+        font-size: 0.78rem;
+    }
+
+    .customer-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.3rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .customer-status-active {
+        background: #ecfdf3;
+        color: #166534;
+    }
+
+    .customer-status-inactive {
+        background: #fef2f2;
+        color: #991b1b;
+    }
+
+    .customer-action {
+        color: #4b5563;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .customer-action:hover {
+        color: #111827;
+        text-decoration: underline;
+    }
+
+    .customer-empty {
+        padding: 3rem 1rem;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    .customer-pagination-wrapper {
+        padding: 1rem;
+        border-top: 1px solid #f0f1f3;
+    }
+
+    @media (max-width: 767.98px) {
+        .customer-page-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .customer-table-card {
+            overflow-x: auto;
+        }
+
+        .customer-table {
+            min-width: 700px;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <!-- Header -->
+    <div class="customer-page-header">
+
+        <div>
+            <h1 class="customer-page-title">
+                Customers
+            </h1>
+
+            <p class="customer-page-subtitle">
+                View and manage registered customer accounts.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Search -->
+    <div class="customer-search-card">
+
+        <form
+            method="get"
+            class="row g-2"
+        >
+
+            <div class="col-12 col-md">
+                <input
+                    type="search"
+                    name="search"
+                    value="{{ search }}"
+                    class="form-control"
+                    placeholder="Search by name or email..."
+                >
+            </div>
+
+            <div class="col-12 col-md-auto">
+
+                <button
+                    type="submit"
+                    class="btn btn-dark w-100"
+                >
+                    <i class="bi bi-search me-1"></i>
+                    Search
+                </button>
+
+            </div>
+
+            {% if search %}
+                <div class="col-12 col-md-auto">
+
+                    <a
+                        href="{% url 'dashboard:customers' %}"
+                        class="btn btn-outline-secondary w-100"
+                    >
+                        Clear
+                    </a>
+
+                </div>
+            {% endif %}
+
+        </form>
+
+    </div>
+
+
+    <!-- Customer table -->
+    <div class="customer-table-card">
+
+        {% if customers %}
+
+            <div class="table-responsive">
+
+                <table class="table customer-table">
+
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for customer in customers %}
+
+                            <tr>
+
+                                <td>
+                                    <div class="customer-name">
+                                        {% if customer.get_full_name %}
+                                            {{ customer.get_full_name }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="customer-email">
+                                        {{ customer.email }}
+                                    </div>
+                                </td>
+
+                                <td>
+                                    {{ customer.created_at|date:"d M Y" }}
+                                </td>
+
+                                <td>
+
+                                    {% if customer.is_active %}
+
+                                        <span class="customer-status customer-status-active">
+                                            Active
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="customer-status customer-status-inactive">
+                                            Inactive
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a
+                                        href="{% url 'dashboard:customer-detail' customer_id=customer.id %}"
+                                        class="customer-action"
+                                    >
+                                        View
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Pagination -->
+            <div class="customer-pagination-wrapper">
+
+                {% include "dashboard/partials/pagination.html" %}
+
+            </div>
+
+        {% else %}
+
+            <div class="customer-empty">
+
+                <div class="mb-2">
+                    <i class="bi bi-people fs-3"></i>
+                </div>
+
+                <div class="fw-semibold mb-1">
+                    No customers found
+                </div>
+
+                <div class="small">
+                    {% if search %}
+                        Try a different search term.
+                    {% else %}
+                        No customer accounts are available yet.
+                    {% endif %}
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

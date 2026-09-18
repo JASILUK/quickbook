@@ -1,0 +1,211 @@
+```html
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    {{ page_title }} | QuickBook
+{% endblock %}
+
+{% block page_title %}
+    {{ page_title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-0">
+
+    <div class="mb-4">
+
+        <a
+            href="{% if vendor %}{% url 'dashboard:vendor-detail' vendor_id=vendor.id %}{% else %}{% url 'dashboard:vendors' %}{% endif %}"
+            class="text-decoration-none text-secondary small"
+        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+        </a>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-12 col-lg-8 col-xl-7">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <div class="mb-4">
+
+                        <h2 class="h5 fw-bold mb-1">
+                            {{ page_title }}
+                        </h2>
+
+                        <p class="text-secondary small mb-0">
+                            {% if vendor %}
+                                Update vendor information.
+                            {% else %}
+                                Add a new vendor to QuickBook.
+                            {% endif %}
+                        </p>
+
+                    </div>
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+
+                        {% if form.non_field_errors %}
+
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.name.id_for_label }}"
+                                class="form-label"
+                            >
+                                Vendor Name
+                            </label>
+
+                            {{ form.name }}
+
+                            {% if form.name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.name.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="row">
+
+                            <div class="col-12 col-md-6 mb-3">
+
+                                <label
+                                    for="{{ form.email.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Email
+                                </label>
+
+                                {{ form.email }}
+
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.email.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="col-12 col-md-6 mb-3">
+
+                                <label
+                                    for="{{ form.phone.id_for_label }}"
+                                    class="form-label"
+                                >
+                                    Phone
+                                </label>
+
+                                {{ form.phone }}
+
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.phone.errors|striptags }}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label
+                                for="{{ form.address.id_for_label }}"
+                                class="form-label"
+                            >
+                                Address
+                            </label>
+
+                            {{ form.address }}
+
+                            {% if form.address.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.address.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.description.id_for_label }}"
+                                class="form-label"
+                            >
+                                Description
+                            </label>
+
+                            {{ form.description }}
+
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.description.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="d-flex gap-2">
+
+                            <button
+                                type="submit"
+                                class="btn btn-dark"
+                            >
+                                <i class="bi bi-check-lg me-1"></i>
+
+                                {% if vendor %}
+                                    Save Changes
+                                {% else %}
+                                    Create Vendor
+                                {% endif %}
+
+                            </button>
+
+
+                            <a
+                                href="{% if vendor %}{% url 'dashboard:vendor-detail' vendor_id=vendor.id %}{% else %}{% url 'dashboard:vendors' %}{% endif %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancel
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

@@ -1,0 +1,336 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    Booking #{{ booking.id }} - QuickBook
+{% endblock %}
+
+{% block page_title %}
+    Booking #{{ booking.id }}
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+
+    <div>
+
+        <h4 class="mb-1">
+            Booking #{{ booking.id }}
+        </h4>
+
+        <p class="text-muted mb-0">
+            Booking details and management.
+        </p>
+
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'dashboard:bookings' %}"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+
+        {% if booking.status == "CONFIRMED" %}
+
+            <form
+                method="post"
+                action="{% url 'dashboard:booking-cancel' booking.id %}"
+                class="m-0"
+                onsubmit="return confirm('Are you sure you want to cancel this booking?');"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-danger"
+                >
+                    <i class="bi bi-x-circle"></i>
+                    Cancel Booking
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="row g-4">
+
+
+    <!-- Booking information -->
+
+    <div class="col-12 col-lg-8">
+
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white border-0 pt-4 px-4">
+
+                <h5 class="mb-0">
+                    Booking Information
+                </h5>
+
+            </div>
+
+            <div class="card-body px-4">
+
+                <div class="row g-4">
+
+                    <div class="col-6">
+
+                        <small class="text-muted d-block">
+                            Booking ID
+                        </small>
+
+                        <strong>
+                            #{{ booking.id }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <small class="text-muted d-block">
+                            Status
+                        </small>
+
+                        {% if booking.status == "CONFIRMED" %}
+
+                            <span class="badge text-bg-success">
+                                Confirmed
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge text-bg-secondary">
+                                Cancelled
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <small class="text-muted d-block">
+                            Tickets
+                        </small>
+
+                        <strong>
+                            {{ booking.quantity }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <small class="text-muted d-block">
+                            Total Amount
+                        </small>
+
+                        <strong>
+                            ₹{{ booking.total_amount }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <small class="text-muted d-block">
+                            Booked At
+                        </small>
+
+                        <strong>
+                            {{ booking.booked_at|date:"d M Y, h:i A" }}
+                        </strong>
+
+                    </div>
+
+
+                    {% if booking.cancelled_at %}
+
+                        <div class="col-6">
+
+                            <small class="text-muted d-block">
+                                Cancelled At
+                            </small>
+
+                            <strong>
+                                {{ booking.cancelled_at|date:"d M Y, h:i A" }}
+                            </strong>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Event -->
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white border-0 pt-4 px-4">
+
+                <h5 class="mb-0">
+                    Event
+                </h5>
+
+            </div>
+
+            <div class="card-body px-4">
+
+                <h5>
+                    {{ booking.event.title }}
+                </h5>
+
+                <p class="text-muted mb-4">
+                    {{ booking.event.description|default:"No description provided." }}
+                </p>
+
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Venue
+                        </small>
+
+                        <strong>
+                            {{ booking.event.venue_name }}
+                        </strong>
+
+                        <div class="small text-muted">
+                            {{ booking.event.address }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Vendor
+                        </small>
+
+                        <strong>
+                            {{ booking.event.vendor.name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Starts
+                        </small>
+
+                        <strong>
+                            {{ booking.event.start_datetime|date:"d M Y, h:i A" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted d-block">
+                            Ends
+                        </small>
+
+                        <strong>
+                            {{ booking.event.end_datetime|date:"d M Y, h:i A" }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Customer -->
+
+    <div class="col-12 col-lg-4">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white border-0 pt-4 px-4">
+
+                <h5 class="mb-0">
+                    Customer
+                </h5>
+
+            </div>
+
+            <div class="card-body px-4">
+
+                <div class="mb-4">
+
+                    <small class="text-muted d-block">
+                        Name
+                    </small>
+
+                    <strong>
+                        {{ booking.user.get_full_name|default:"—" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <small class="text-muted d-block">
+                        Email
+                    </small>
+
+                    <strong class="text-break">
+                        {{ booking.user.email }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <small class="text-muted d-block">
+                        Customer ID
+                    </small>
+
+                    <strong>
+                        #{{ booking.user.id }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
